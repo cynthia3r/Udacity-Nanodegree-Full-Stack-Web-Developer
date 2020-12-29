@@ -5,7 +5,14 @@
 import json
 import dateutil.parser
 import babel
-from flask import Flask, render_template, request, Response, flash, redirect, url_for, jsonify
+from flask import (
+  Flask, 
+  render_template, 
+  request, Response, 
+  flash, 
+  redirect, 
+  url_for, jsonify
+)
 from flask_moment import Moment
 from flask_sqlalchemy import SQLAlchemy
 import logging
@@ -157,7 +164,6 @@ def search_venues():
 
   for result in results:
     num = db.session.query(func.count(Show.c.venue_id)).filter(Show.c.venue_id == result.id).filter(Show.c.start_time > datetime.now()).all()[0][0]
-    print("num_upcoming_shows artists: {}".format(num))
     data.append({
       "id" : result.id,
       "name": result.name,
@@ -266,7 +272,6 @@ def create_venue_submission():
 def delete_venue(venue_id):
   # TODO COMPLETED: Complete this endpoint for taking a venue_id, and using
   # SQLAlchemy ORM to delete a record. Handle cases where the session commit could fail.
-  print("/venues/{}".format(venue_id))
   try:
     venue = Venue.query.get(venue_id)
     db.session.delete(venue)
@@ -304,7 +309,6 @@ def search_artists():
 
   for result in results:
     num = db.session.query(func.count(Show.c.artist_id)).filter(Show.c.artist_id == result.id).filter(Show.c.start_time > datetime.now()).all()[0][0]
-    print("num_upcoming_shows artists: {}".format(num))
     data.append({
       "id" : result.id,
       "name": result.name,
@@ -558,7 +562,7 @@ def shows():
       "artist_image_link": artist_image_link,
       "start_time": show.start_time.strftime("%Y-%m-%d %H:%M:%S")
     })
-    
+
   return render_template('pages/shows.html', shows=data)
 
 @app.route('/shows/create')
