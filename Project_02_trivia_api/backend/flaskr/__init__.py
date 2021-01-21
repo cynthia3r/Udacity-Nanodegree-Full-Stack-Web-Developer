@@ -74,9 +74,11 @@ def create_app(test_config=None):
   '''
   @app.route('/questions')
   def get_questions():
-    #query all questions and apply pagination
+    #query all questions, keep a count of total questions
     selection = Question.query.order_by(Question.id).all()
     total_questions = len(selection)
+
+    #apply pagination
     current_questions = paginate_questions(request, selection)
 
     #abort if no questions to be shown for the current paginated page
@@ -128,6 +130,8 @@ def create_app(test_config=None):
       #prepare the information so that it can be send as part of response object
       selection = Question.query.order_by(Question.id).all()
       total_questions = len(selection)
+      
+      #apply pagination
       current_questions = paginate_questions(request, selection)
 
       #return the result in json format
@@ -175,8 +179,7 @@ def create_app(test_config=None):
         current_questions = paginate_questions(request, selection)
 
         #get the total number of questions
-        total_questions = len(Question.query.all())
-        #total_questions = len(current_questions)
+        total_questions = len(current_questions)
 
         #return the result in json format
         return jsonify({
@@ -249,8 +252,7 @@ def create_app(test_config=None):
     selection = Question.query.filter(Question.category == category.id).all()
 
     #get the total number of questions
-    total_questions = len(Question.query.all())
-    #total_questions = len(selection)
+    total_questions = len(selection)
     
     #apply pagination
     current_questions = paginate_questions(request, selection)
