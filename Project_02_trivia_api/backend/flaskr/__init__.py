@@ -74,7 +74,7 @@ def create_app(test_config=None):
   '''
   @app.route('/questions')
   def get_questions():
-    #query all questions, keep a count of total questions
+    #query all questions and keep a count of total questions
     selection = Question.query.order_by(Question.id).all()
     total_questions = len(selection)
 
@@ -130,7 +130,7 @@ def create_app(test_config=None):
       #prepare the information so that it can be send as part of response object
       selection = Question.query.order_by(Question.id).all()
       total_questions = len(selection)
-      
+
       #apply pagination
       current_questions = paginate_questions(request, selection)
 
@@ -150,7 +150,7 @@ def create_app(test_config=None):
   #a.retrieve questions based on a search term
   #b.create new question based on information passed in request object
   @app.route('/questions', methods=['POST'])
-  def create_question():
+  def create_or_search_question():
     #get the request body data in json format
     body = request.get_json()
 
@@ -205,7 +205,7 @@ def create_app(test_config=None):
         new_difficulty = body.get('difficulty', None)
 
         #check if all fields contain data
-        if((new_question is None) or (new_answer is None) or (new_category is None) or (new_difficulty is None)):
+        if((not new_question) or (not new_answer) or (not new_category) or (not new_difficulty)):
           abort(422)
 
         #create and insert new question in the database
@@ -277,6 +277,12 @@ def create_app(test_config=None):
   one question at a time is displayed, the user is allowed to answer
   and shown whether they were correct or not. 
   '''
+  @app.route('/quizzes', methods=['POST'])
+  def generate_random_quiz_question():
+    #return the result in json format
+    return jsonify({
+      
+    })
 
 
   '''
