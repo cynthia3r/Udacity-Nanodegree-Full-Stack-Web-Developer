@@ -97,6 +97,7 @@ def create_app(test_config=None):
       "questions": current_questions,
       "total_questions": total_questions,
       "categories": categories_dict,
+      "current_category": None,
     })
 
 
@@ -186,6 +187,7 @@ def create_app(test_config=None):
           "success": True,
           "questions": current_questions,
           "total_questions": total_questions,
+          "current_category": None,
         })
       else:
         '''
@@ -267,7 +269,7 @@ def create_app(test_config=None):
 
 
   '''
-  @TODO: 
+  @TODO COMPLETED: 
   Create a POST endpoint to get questions to play the quiz. 
   This endpoint should take category and previous question parameters 
   and return a random questions within the given category, 
@@ -275,14 +277,40 @@ def create_app(test_config=None):
 
   TEST: In the "Play" tab, after a user selects "All" or a category,
   one question at a time is displayed, the user is allowed to answer
-  and shown whether they were correct or not. 
+  and show whether they were correct or not. 
   '''
   @app.route('/quizzes', methods=['POST'])
   def generate_random_quiz_question():
-    #return the result in json format
-    return jsonify({
-      
-    })
+    try:
+      #load request body
+      body = request.get_json()
+
+      #get previous questions from request body
+      previous_questions = body.get('previous_questions')
+      #get quiz category from request body
+      quiz_category = body.get('quiz_category')
+
+      #abort if previous questions and quiz category not found
+      if((previous_questions is None) or (quiz_category is None)):
+        abort(422)
+
+      #if category "All" is selected by user, load all questions except the ones listed in previous questions 
+      if(quiz_category['id'] == 0):
+        available_questions = Question.query.filter(Question.id.notin_(previous_questions)).all()
+      #load questions for selected category except the ones listed in previous questions
+      else:
+        available_questions = Question.query.filter_by(category=quiz_category['id']).filter(Question.id.notin_(previous_questions)).all()
+
+      #pick a random question from list of available questions
+      quiz_question = available_questions[random.randrange(0, len(available_questions))].format() if len(available_questions) > 0 else None
+
+      #return the result in json format
+      return jsonify({
+        "success": True,
+        "question": quiz_question,
+      })
+    except:
+      abort(422)
 
 
   '''
