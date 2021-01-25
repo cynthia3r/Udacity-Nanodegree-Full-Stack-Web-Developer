@@ -73,6 +73,12 @@ One note before you delve into your tasks: for each endpoint you are expected to
 
 
 ### Error Handling
+The API will return the following error codes when requests fail:
+- 400: Bad Request
+- 404: Resource Not Found
+- 422: Not Processable
+- 500: Internal Server Error
+
 Errors are returned as JSON objects in the following format:
 ```
 {
@@ -81,11 +87,6 @@ Errors are returned as JSON objects in the following format:
     "message": "bad request"
 }
 ```
-The API will return three error types when requests fail:
-- 400: Bad Request
-- 404: Resource Not Found
-- 422: Not Processable 
-
 
 
 ### Endpoints
